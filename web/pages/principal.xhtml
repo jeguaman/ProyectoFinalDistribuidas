@@ -1,0 +1,88 @@
+<ui:composition template="/template/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="title">Principal</ui:define>
+    <ui:define name="tituloFormulario">Gestión Adiministrativa</ui:define>
+    <ui:define name="autor">Grupo 6 - Arrobo Patricio, Gavilánez Ricardo, Guamán José</ui:define>
+    <ui:define name="nombreUsuario">#{principalBean.nombreUsuario}</ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />
+            <h1>Lista de personal </h1>
+            <h:panelGrid columns="1" style="margin: 0 auto;">
+                <p:dataTable id="tablaPersona" 
+                             var="persona" 
+                             reflow="true"
+                             value="#{principalBean.listaPersona}" 
+                             selectionMode="single" 
+                             paginatorPosition="bottom"
+                             selection="#{principalBean.personaSeleccionada}" 
+                             rowKey="#{persona.codigo}"
+                             rows="6" 
+                             paginator="true" 
+                             emptyMessage="Seleccione un criterio válido de búsqueda.">
+                    <!--<p:ajax event="rowSelect" update=":form:carDetail" oncomplete="PF('carDialog').show()" />-->
+                    <p:column headerText="Nombre"  >
+                        <h:outputText value="#{persona.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Apellido"   >
+                        <h:outputText value="#{persona.apellido}"/>
+                    </p:column> 
+                    <p:column headerText="Cédula"  >
+                        <h:outputText value="#{persona.cedula}"/>
+                    </p:column>
+                </p:dataTable>
+            </h:panelGrid>
+            <h:panelGrid columns="3" style="margin: 0 auto;">
+                <p:commandButton value="Nuevo " 
+                                 oncomplete="PF('nuevoUsuario').show();"
+                                 action="#{principalBean.nuevoPersona()}" 
+                                 update=":ingresoForm :form"   />
+                <p:commandButton value="Editar " 
+                                 action="#{principalBean.metodoVacio()}"
+                                 update=":ingresoForm :form"   />
+                <p:commandButton value="Eliminar " 
+                                 action="#{principalBean.metodoVacio()}" 
+                                 update=":ingresoForm :form"   />
+            </h:panelGrid>
+        </h:form>
+        <p:dialog id="dialogIngresoProveedor"
+                  widgetVar="nuevoUsuario" 
+                  modal="true" 
+                  showEffect="fade"
+                  resizable="false">
+            <h:form id="ingresoForm">
+                <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />  
+                <h3 style="text-align: center">Agregar Persona</h3>
+                <h:panelGrid columns="2" style="margin: 0 auto; border:0px !important; background:none; text-align: justify !important">
+                    <p:outputLabel for="nombreUser" value="Nombre:" />
+                    <p:inputText id="nombreUser" maxlength="59" value="#{principalBean.personaSeleccionada.nombre}" placeholder="Nombre persona">
+                        <p:ajax event="blur" listener="#{principalBean.validateNombre()}" update=":ingresoForm:growl"/>
+                    </p:inputText>
+                    <p:outputLabel for="apellido" value="Apellido:" />
+                    <p:inputText id="apellido" maxlength="59" value="#{principalBean.personaSeleccionada.apellido}" placeholder="Apellido">
+                        <p:ajax event="blur" listener="#{principalBean.validateApellido()}" update=":ingresoForm:growl"/>
+                    </p:inputText>
+                    <p:outputLabel for="cedula" value="Identificación:" />
+                    <p:inputText id="cedula" maxlength="13" value="#{principalBean.personaSeleccionada.cedula}" placeholder="Cédula / Identificación">
+                        <p:ajax event="blur" listener="#{principalBean.validateCedula()}" update=":ingresoForm:growl"/>
+                    </p:inputText>
+
+                </h:panelGrid>
+                <br/>
+                <h:panelGrid columns="2" style="margin: 0 auto; border:none !important; background:none;" >
+                    <p:commandButton  value="Guardar" 
+                                      update=":form"
+                                      actionListener="#{principalBean.guardaPersona()}"/>
+                    <p:commandButton value="Cancelar" 
+                                     update=":ingresoForm :form"
+                                     onclick="nuevoUsuario.hide();" />
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
+

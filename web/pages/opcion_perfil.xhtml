@@ -1,0 +1,60 @@
+<ui:composition template="/template/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="title">Principal</ui:define>
+    <ui:define name="tituloFormulario">Gestión Adiministrativa</ui:define>
+    <ui:define name="autor">Grupo 6 - Arrobo Patricio, Gavilánez Ricardo, Guamán José</ui:define>
+    <ui:define name="nombreUsuario">#{generalBean.nombreUsuario}</ui:define>
+    <ui:define name="content">
+        <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />
+        <h1>Lista de Sistemas</h1>
+        <h:form id="form">
+            <h:panelGrid columns="1" style="margin: 0 auto;">
+                <h:panelGrid columns="2" style="text-align: justify !important">
+                    <p:outputLabel for="lista" value="Perfil: " />
+                    <p:selectOneMenu id="lista" value="#{opcionBean.sistemaSeleccionado}"  style="width: 150px">
+                        <f:selectItem itemLabel="Seleccione" itemValue="-1"/>
+                        <f:selectItems value="#{opcionBean.listaSistemas}" 
+                                       var="provee"
+                                       itemValue="#{provee.codigo}"
+                                       itemLabel="#{provee.nombre}"/>
+                        <p:ajax partialSubmit="true" event="change"/>
+                    </p:selectOneMenu>
+                </h:panelGrid>
+                <p:spacer height="10px"/>
+                <h:panelGrid columns="2" style="text-align: justify !important">
+                    <h:panelGrid columns="1" style="text-align: justify !important">
+                        <p:treeTable value="#{ttSelectionView.root3}" 
+                                     var="document" 
+                                     selectionMode="checkbox" 
+                                     selection="#{ttSelectionView.selectedNodes2}">
+                            <f:facet name="header">
+                                Checkbox
+                            </f:facet>
+                            <p:column headerText="Name">
+                                <h:outputText value="#{document.name}" />
+                            </p:column>
+                            <p:column headerText="Size">
+                                <h:outputText value="#{document.size}" />
+                            </p:column>
+                            <p:column headerText="Type">
+                                <h:outputText value="#{document.type}" />
+                            </p:column>
+                        </p:treeTable>
+
+                        <p:commandButton value="Display" update="msgs" icon="ui-icon-newwin"
+                                         actionListener="#{ttSelectionView.displaySelectedMultiple(ttSelectionView.selectedNodes2)}"/>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" style="text-align: justify !important">
+
+                    </h:panelGrid>
+                </h:panelGrid>
+            </h:panelGrid>
+        </h:form>
+
+    </ui:define>
+</ui:composition>
+

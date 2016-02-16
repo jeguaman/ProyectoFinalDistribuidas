@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <title>
+            <ui:insert name="title">Coloque el titulo de la pagina</ui:insert>
+        </title>
+    </h:head>
+
+    <h:body >
+        <table style="border: 0px" align="left" cellpadding="0" border="0" width="1200">
+            <tr >
+                <center>
+                    <img src="#{request.contextPath}/resources/images/logo_espe.png" width="600" height="100"/>
+                </center>
+            </tr>
+            <p:spacer height="10px"/>
+            <tr>
+                <center>
+                    <td class="header" height="30" align="center" valign="middle"
+                        width="100%" style=" font-family: Verdana, Arial, Helvetica, sans-serif;
+                        font-size: 18px; color:navy">
+                        <ui:insert name="tituloFormulario">titulo formulario</ui:insert>
+                    </td>
+                </center>
+            </tr>
+            <tr>
+                <td height="1" width="100%" bgcolor="#CAD6E0"></td>
+            </tr>
+            <tr>
+                <td >
+                    <div >
+                        <div >
+                            <h2>
+                                <img src="#{request.contextPath}/resources/images/usuario.png" width="40" height="40"/>
+                                <div >Bienvenido <ui:insert name="nombreUsuario">nombre usuario</ui:insert></div> 
+                            </h2>
+                        </div>
+                    </div>
+                    <div >
+                        <p:tabMenu activeIndex="#{param.i}" id="tabMenu" style="font-size: 10px">
+                            <p:menuitem value="Gestión Empleado" outcome="/pages/principal" update="tabMenu" >
+                                <f:param name="i" value="0" />
+                            </p:menuitem>
+                            <p:menuitem value="Gestión Usuario" outcome="/pages/usuario" update="tabMenu" >
+                                <f:param name="i" value="1" />
+                            </p:menuitem>
+                            <p:menuitem value="Gestión Sistema" outcome="/pages/sistema" update="tabMenu" >
+                                <f:param name="i" value="2" />
+                            </p:menuitem>
+                            <p:menuitem value="Gestión Perfil" outcome="/pages/perfil" update="tabMenu" >
+                                <f:param name="i" value="3" />
+                            </p:menuitem>
+                            <p:menuitem value="Gestión Opción" outcome="/pages/opcion" update="tabMenu" >
+                                <f:param name="i" value="4" />
+                            </p:menuitem>
+                            <p:menuitem value="Opciones por perfil" outcome="/pages/opcion_perfil" update="tabMenu" >
+                                <f:param name="i" value="5" />
+                            </p:menuitem>
+                            <p:menuitem value="Usuario por perfil" outcome="/pages/usuario_perfil" update="tabMenu">
+                                <f:param name="i" value="6" />
+                            </p:menuitem>
+                        </p:tabMenu>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td width="100%" colspan="2" align="center">
+                    <table width="100%" style="height: auto; margin-bottom: 35px" align="left" cellpadding="0" 
+                           cellspacing="0" border="0">		
+                        <tr>
+                            <td align="center" width="0%" valign="middle" class="formulario"
+                                style=" font-family: Verdana, Arial, Helvetica, sans-serif;
+                                font-size: 14px;">
+                            </td>				  
+                            <td align="center" width="80%" valign="top" class="formulario"
+                                style=" font-family: Verdana, Arial, Helvetica, sans-serif;
+                                font-size: 14px;">
+
+                                <ui:insert
+                                    name="content">
+                                    Aqui va el contenido
+                                </ui:insert>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" valign="bottom" height="1" width="100%"
+                    bgcolor="#CAD6E0" style=" font-family: Verdana, Arial, Helvetica, sans-serif;
+                    font-style: Italic; font-size:14px;">
+                    <ui:insert name="autor">
+                        aqui va
+                    </ui:insert></td>
+            </tr>
+        </table>
+    </h:body>
+
+</html>

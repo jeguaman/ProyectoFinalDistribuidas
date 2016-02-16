@@ -1,0 +1,68 @@
+<ui:composition template="/template/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="title">Principal</ui:define>
+    <ui:define name="tituloFormulario">Gestión Adiministrativa</ui:define>
+    <ui:define name="autor">Grupo 6 - Arrobo Patricio, Gavilánez Ricardo, Guamán José</ui:define>
+    <ui:define name="nombreUsuario">#{generalBean.nombreUsuario}</ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />
+            <h1>Usuarios por perfil</h1>
+            <h:panelGrid columns="1" style="margin: 0 auto;">
+                <h:panelGrid columns="2" style="text-align: justify !important">
+                    <p:outputLabel for="lista" value="Perfiles: " />
+                    <p:selectOneMenu id="lista" value="#{usuarioPerfilBean.perfilSeleccionado}"  style="width: 150px">
+                        <f:selectItem itemLabel="Seleccione" itemValue="-1"/>
+                        <f:selectItems value="#{usuarioPerfilBean.listaPerfiles}" 
+                                       var="provee"
+                                       itemValue="#{provee.codigoPerfil}"
+                                       itemLabel="#{provee.nombrePerfil}"/>
+                        <p:ajax partialSubmit="true" event="change" listener="#{usuarioPerfilBean.loadUsuarios()}" update=":form:pickList" process="@form"/>
+                    </p:selectOneMenu>
+                </h:panelGrid>
+                <h:panelGrid columns="1" style="margin: 0 auto;">
+                    <p:pickList id="pickList" value="#{usuarioPerfilBean.listaDualUsuario}"
+                                var="user" 
+                                itemLabel="#{user.nombreUsuario}" 
+                                itemValue="#{user}" 
+                                >
+                        <f:facet name="sourceCaption">Usuarios</f:facet>
+                        <f:facet name="targetCaption">Usuario por Perfil</f:facet>
+                    </p:pickList>
+                </h:panelGrid>
+                <p:spacer height="5px"/>
+                <h:panelGrid columns="1" style="margin: 0 auto;">
+                    <p:commandButton value="Guardar Cambios" 
+                                     action="#{usuarioPerfilBean.guardarAsignacion()}" 
+                                     update=":form"  
+                                     process="@form"/>
+                </h:panelGrid>
+            </h:panelGrid>
+        </h:form>
+        <!--  <p:dialog 
+              modal="true" 
+              widgetVar="cityDialog"
+              showEffect="fade" 
+              hideEffect="fade" 
+              >
+              <h:form id="form_dlg">
+                  <h:panelGrid id="displayCities" columns="2">
+                      <h:outputText value="Source: " style="font-weight:bold" />
+                      <ui:repeat value="#{usuarioPerfilBean.listaDualUsuario.source}" var="item">
+                          <h:outputText value="#{item}" style="margin-right:5px" />
+                      </ui:repeat>
+  
+                      <h:outputText value="Target: " style="font-weight:bold" />
+                      <ui:repeat value="#{usuarioPerfilBean.listaDualUsuario.source}" var="item">
+                          <h:outputText value="#{item}" style="margin-right:5px" />
+                      </ui:repeat>
+                  </h:panelGrid>
+              </h:form>
+          </p:dialog>-->
+    </ui:define>
+</ui:composition>
+

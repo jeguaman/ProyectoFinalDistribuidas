@@ -1,0 +1,91 @@
+<ui:composition template="/template/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="title">Principal</ui:define>
+    <ui:define name="tituloFormulario">Gestión Adiministrativa</ui:define>
+    <ui:define name="autor">Grupo 6 - Arrobo Patricio, Gavilánez Ricardo, Guamán José</ui:define>
+    <ui:define name="nombreUsuario">#{perfilBean.nombreUsuario}</ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />
+            <h1>Lista de perfiles </h1>
+            <h:panelGrid columns="1" style="margin: 0 auto;">
+                <p:dataTable id="tablaPersona" 
+                             var="persona" 
+                             reflow="true"
+                             value="#{perfilBean.listaPerfiles}" 
+                             selectionMode="single" 
+                             paginatorPosition="bottom"
+                             selection="#{perfilBean.perfilSeleccionado}" 
+                             rowKey="#{persona.codigoPerfil}"
+                             rows="6" 
+                             paginator="true" 
+                             emptyMessage="Seleccione un criterio válido de búsqueda.">
+                    <!--<p:ajax event="rowSelect" update=":form:carDetail" oncomplete="PF('carDialog').show()" />-->
+                    <p:column headerText="Nombre"  >
+                        <h:outputText value="#{persona.nombrePerfil}"/>
+                    </p:column>
+                    <p:column headerText="Descripción"   >
+                        <h:outputText value="#{persona.descripcion}"/>
+                    </p:column> 
+                </p:dataTable>
+            </h:panelGrid>
+            <h:panelGrid columns="3" style="margin: 0 auto;">
+                <p:commandButton value="Nuevo " 
+                                 oncomplete="PF('nuevoUsuario').show();"
+                                 action="#{perfilBean.nuevoPerfil()}" 
+                                 update=":ingresoForm :form"   />
+                <p:commandButton value="Editar " 
+                                 action="#{perfilBean.metodoVacio()}"
+                                 update=":ingresoForm :form"   />
+                <p:commandButton value="Eliminar " 
+                                 action="#{perfilBean.metodoVacio()}" 
+                                 update=":ingresoForm :form"   />
+            </h:panelGrid>
+        </h:form>
+        <p:dialog id="dialogIngresoProveedor"
+                  widgetVar="nuevoUsuario" 
+                  modal="true" 
+                  showEffect="fade"
+                  resizable="false">
+            <h:form id="ingresoForm">
+                <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />  
+                <h3 style="text-align: center">Agregar Perfil</h3>
+                <h:panelGrid columns="1" style="margin: 0 auto; border:0px !important; background:none; text-align: justify !important">
+                    <h:panelGrid columns="2" style="text-align: justify !important">
+                        <p:outputLabel for="nombreUser" value="Nombre:" />
+                        <p:inputText id="nombreUser" maxlength="59" value="#{perfilBean.perfilSeleccionado.nombrePerfil}" placeholder="Nombre perfil">
+                            <p:ajax event="blur" listener="#{perfilBean.metodoVacio()}" update=":ingresoForm:growl"/>
+                        </p:inputText>
+                    </h:panelGrid>
+                    <h:panelGrid columns="1" style="text-align: justify !important">
+                        <h:panelGrid columns="2" style="text-align: justify !important">
+                            <h:panelGrid columns="1" style="text-align: justify !important">
+                                <p:outputLabel value="Descripción: " />
+                            </h:panelGrid>
+                            <h:panelGrid columns="1" style="text-align: justify !important">
+                                <p:inputTextarea maxlength="100" rows="5" cols="30" counter="display" counterTemplate="{0} caracteres restantes." value="#{perfilBean.perfilSeleccionado.descripcion}" placeholder="Descripción">
+                                    <p:ajax event="blur" listener="#{perfilBean.metodoVacio()}" update=":ingresoForm:growl"/>
+                                </p:inputTextarea>
+                                <h:outputText id="display" />
+                            </h:panelGrid>
+                        </h:panelGrid>
+                    </h:panelGrid>
+                </h:panelGrid>
+                <br/>
+                <h:panelGrid columns="2" style="margin: 0 auto; border:none !important; background:none;" >
+                    <p:commandButton  value="Guardar" 
+                                      update=":form"
+                                      actionListener="#{perfilBean.guardarPerfil()}"/>
+                    <p:commandButton value="Cancelar" 
+                                     update=":ingresoForm :form"
+                                     onclick="nuevoUsuario.hide();" />
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
+

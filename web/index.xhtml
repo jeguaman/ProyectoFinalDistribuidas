@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Proyecto Final Distribuidas</title>
+    </h:head>
+    <h:body>
+        <p:layout fullPage="true" >
+            <p:layoutUnit position="north" size="250" resizable="false" closable="false" collapsible="false">
+                <center><img src="#{request.contextPath}/resources/images/logo_espe.png" width="800" height="200"/></center>
+            </p:layoutUnit>
+            <p:layoutUnit position="center" >
+                <h:form id="formCenter">
+                    <h:panelGrid id="indexWeb" style="padding: 0 20px; overflow: auto; height: auto;">
+                        <h:outputLabel style="font-size: 24px; font-weight: bold; border-bottom: 1px solid black; margin-bottom: 15px;"
+                                       value="Aplicaciones Distribuidas I" />
+                        <br/>
+                        <h:outputLabel style="font-size: 18px; font-weight: normal;  margin-bottom: 15px;" 
+                                       value="Proyecto Final" />
+                        <br/>
+                        <h:outputLabel style="font-size: 18px; font-weight: normal; margin-bottom: 15px;" 
+                                       value="Grupo 6 - Arrobo, Gavilanez, Guamán" />
+                        <br/>
+                        <h:commandButton type="button" value="Iniciar Sessión" style="width: 120px; height: 40px" onclick="PF('dlgLogin').show();"/>
+                        <!--<h:link outcome="/webPages/proveedor.xhtml" value="Ingresar" />-->
+                    </h:panelGrid>
+                </h:form>
+
+                <p:dialog id="loginDialog"
+                          header="Acceso Sistema"
+                          widgetVar="dlgLogin" 
+                          showEffect="fade"
+                          resizable="false"
+                          dynamic="true"
+                          draggable="false" 
+                          closable="true"
+                          >
+                    <h:form id="frmLogin">
+                        <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />  
+                        <h:panelGrid columns="2" cellpadding="5">
+                            <p:outputLabel for="username" value="Usuario:" />
+                            <p:inputText id="username" value="#{loginBean.username}" label="username" />
+
+                            <p:outputLabel for="password" value="Password:" />
+                            <p:password id="password" value="#{loginBean.password}" label="password" />
+
+                            <p:commandButton value="Entrar" update=":formCenter" actionListener="#{loginBean.checkAccess()}"
+                                             />
+                        </h:panelGrid>
+                    </h:form>
+                </p:dialog>
+            </p:layoutUnit>
+        </p:layout>
+    </h:body>
+</html>
