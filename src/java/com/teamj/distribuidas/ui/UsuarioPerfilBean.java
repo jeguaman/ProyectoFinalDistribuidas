@@ -10,6 +10,7 @@ import com.teamj.distribuidas.model.database.Perfil;
 import com.teamj.distribuidas.model.database.Usuario;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,9 +33,8 @@ public class UsuarioPerfilBean implements Serializable {
     private List<Usuario> listaUsuario;
     private List<Usuario> listaTodosUsuario;
     private DualListModel<Usuario> listaDualUsuario;
-    private List<Usuario> source;
-    private List<Usuario> target;
-    private List<Usuario> auxListUsuarioAsignadoPerfil;
+    private List<Usuario> listaOriginalAsignada;
+    private List<Usuario> listaOriginalGeneral;
 
     public UsuarioPerfilBean() {
         init();
@@ -86,8 +86,11 @@ public class UsuarioPerfilBean implements Serializable {
     }
 
     public void loadUsuarios() {
-        source = new ArrayList<>();
-        target = new ArrayList<>();
+        List<Usuario> source = new ArrayList<>();
+        List<Usuario> target = new ArrayList<>();
+
+        listaOriginalAsignada = new ArrayList<>();
+        listaOriginalGeneral = new ArrayList<>();
         if (listaPerfiles != null) {
             if (perfilSeleccionado != null && perfilSeleccionado.compareTo(-1) != 0) {
                 try {
@@ -96,7 +99,7 @@ public class UsuarioPerfilBean implements Serializable {
                         for (int i = 0; i < listaUsuario.size(); i++) {
                             target.add(listaUsuario.get(i));
                         }
-                        auxListUsuarioAsignadoPerfil.addAll(target);
+                        listaOriginalAsignada.addAll(target);
                     }
                 } catch (Exception ex) {
 
@@ -107,6 +110,7 @@ public class UsuarioPerfilBean implements Serializable {
                         for (int i = 0; i < listaTodosUsuario.size(); i++) {
                             source.add(listaTodosUsuario.get(i));
                         }
+                        listaOriginalGeneral.addAll(source);
                     }
                 } catch (Exception ex) {
 
@@ -134,22 +138,60 @@ public class UsuarioPerfilBean implements Serializable {
     }
 
     public void guardarAsignacion() {
-        List<Usuario> usuarios;
-        List<Integer> usuarioInsertar = new ArrayList<>();
-        List<Integer> usuarioEliminar = new ArrayList<>();
-        usuarios = listaDualUsuario.getTarget();
-        if (!auxListUsuarioAsignadoPerfil.containsAll(usuarios)) {//si no contiene los mismos elementos hace lo siguiente
-            for (int i = 0; i < auxListUsuarioAsignadoPerfil.size(); i++) {
-                for (int j = 0; j < usuarios.size(); j++) {
-                    if (auxListUsuarioAsignadoPerfil.get(i).getCodigo().compareTo(usuarios.get(j).getCodigo()) != 0) {
-                        usuarioInsertar.add(usuarios.get(j).getCodigo());
-                    }
-                }
-                usuarioEliminar.add(auxListUsuarioAsignadoPerfil.get(i).getCodigo());
-            }
-
+        if (eliminarUsuariosAsignados() || agregarUsuarioPerfil()) {
+            loadUsuarios();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Información", "Registros actualizados con éxito."));
         }
-
     }
 
+    private Boolean eliminarUsuariosAsignados() {
+        List<Usuario> usuariosGeneral = new ArrayList<>();
+        List<Usuario> auxEl = new ArrayList<>();
+        usuariosGeneral = listaDualUsuario.getSource();
+        Boolean success = false;
+        if (!usuariosGeneral.isEmpty() && !listaOriginalGeneral.containsAll(usuariosGeneral)) {
+            auxEl = usuariosGeneral;
+            for (Usuario us : listaOriginalGeneral) {
+                if (auxEl.contains(us)) {
+                    auxEl.remove(us);
+                }
+            }
+            try {
+                if (FacadeNegocio.eliminarUsuariosXPerfil(perfilSeleccionado, auxEl)) {
+                    success = true;
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(UsuarioPerfilBean.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return success;
+    }
+
+    private Boolean agregarUsuarioPerfil() {
+        List<Usuario> usuariosXperfil = new ArrayList<>();
+        List<Usuario> auxIns = new ArrayList<>();
+        Boolean success = false;
+        usuariosXperfil = listaDualUsuario.getTarget();
+        //eliminar los usuarios Asignados
+
+        if (!usuariosXperfil.isEmpty() && !listaOriginalAsignada.containsAll(usuariosXperfil)) {
+            auxIns = usuariosXperfil;
+            for (Usuario us : listaOriginalAsignada) {
+                if (auxIns.contains(us)) {
+                    auxIns.remove(us);
+                }
+            }
+            try {
+                if (FacadeNegocio.insertarUsuariosXPerfil(perfilSeleccionado, auxIns)) {
+                    success = true;
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(UsuarioPerfilBean.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            System.out.println("Está tal y como estába ");
+        }
+        return success;
+    }
 }
