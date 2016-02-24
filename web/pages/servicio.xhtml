@@ -1,0 +1,94 @@
+<ui:composition template="/template/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="title">Servicios</ui:define>
+    <ui:define name="tituloFormulario">Gestión Servicios</ui:define>
+    <ui:define name="autor">Grupo 6 - Arrobo Patricio, Gavilánez Ricardo, Guamán José</ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />  
+            <p:outputLabel value="Búsqueda por nombre de Servicio: "/>
+            <h:panelGrid columns="2" style="margin: 0 auto;">
+                <p:inputText value="#{servicioBean.buscar}" placeholder="Valor a buscar"/>
+                <p:commandButton value="Buscar" 
+                                 action="#{servicioBean.buscarServicio()}" 
+                                 update=":form:tablaServicio :form:growl"   />
+            </h:panelGrid>
+            <h:panelGrid columns="1" style="margin: 0 auto;" >
+                <p:dataTable id="tablaServicio" 
+                             var="servicio" 
+                             reflow="true"
+                             value="#{servicioBean.listaServicios}" 
+                             selectionMode="single" 
+                             paginatorPosition="bottom"
+                             selection="#{servicioBean.servicioSeleccionado}" 
+                             rowKey="#{servicio.peserCodser}"
+                             rows="6" 
+                             paginator="true" 
+                             emptyMessage="Seleccione un criterio válido de búsqueda.">
+                    <!--<p:ajax event="rowSelect" update=":form:carDetail" oncomplete="PF('carDialog').show()" />-->
+
+                    <p:column headerText="Nombre Servicio"  >
+                        <h:outputText value="#{servicio.peserNomser}"/>
+                    </p:column>
+                    <p:column headerText="Tipo Servicio"   >
+                        <h:outputText value="#{servicio.peserTipser}"  />
+                    </p:column> 
+                    <p:column headerText="Costo Servicio"  >
+                        <h:outputText value="$ #{servicio.peserCosser}"   />
+                    </p:column>
+                </p:dataTable>
+            </h:panelGrid>
+            <br/>
+            <h:panelGrid columns="3" style="margin: 0 auto;" >
+                <p:commandButton value="Nuevo" oncomplete="PF('nuevoDialog').show();" action="#{servicioBean.nuevoServicio()}" update=":ingresoForm :form "/>
+                <p:commandButton value="Editar" actionListener="#{servicioBean.editar()}" update=":ingresoForm" process="@form"/>
+                <p:commandButton value="Eliminar" action="#{servicioBean.eliminar()}" update=":form" />
+            </h:panelGrid>
+        </h:form>
+
+
+        <p:dialog id="dialogIngresoServicio"
+                  widgetVar="nuevoDialog" 
+                  modal="true" 
+                  showEffect="fade"
+                  resizable="false">
+            <h:form id="ingresoForm">
+                <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />  
+                <h3 style="text-align: center">#{servicioBean.flagActualizarEditar eq true ? 'Agregar Servicio' : 'Modificar Servicio'}</h3>
+                <h:panelGrid columns="2" style="margin: 0 auto; border:0px !important; background:none; text-align: justify !important">
+                    <p:outputLabel for="nombreProv" value="Nombre servicio:" />
+                    <p:inputText id="nombreProv" maxlength="59" value="#{servicioBean.nombreServicio}" placeholder="Nombre servicio">
+                        <p:ajax event="blur" listener="#{servicioBean.validateNombreServicio()}" update=":ingresoForm:growl"/>
+                    </p:inputText>
+                    <p:outputLabel for="nivelServ" value="Tipo Servicio:" />
+                    <p:inputText id="nivelServ" maxlength="59" value="#{servicioBean.tipoServicio}" placeholder="tipo servicio ">
+                        <p:ajax event="blur" listener="#{servicioBean.validateTipoServicio()}" update=":ingresoForm:growl"/>
+                    </p:inputText>
+                    <p:outputLabel for="porceDeduc" value="Costo servicio:" />
+                    <p:inputText id="porceDeduc" maxlength="9" value="#{servicioBean.costoServicio}" placeholder="valor en $0.00">
+                        <p:ajax event="blur" listener="#{servicioBean.validateCostoServicio()}" update=":ingresoForm:growl"/>
+                    </p:inputText>
+                </h:panelGrid>
+                <br/>
+                <h:panelGrid columns="2" style="margin: 0 auto; border:none !important; background:none;" >
+                    <p:commandButton  value="Guardar" 
+                                      update=":form"
+                                      actionListener="#{servicioBean.guardarServicio()}"
+                                      rendered="#{servicioBean.flagActualizarEditar}"/>
+                    <p:commandButton  value="Actualizar" 
+                                      update=":form"
+                                      actionListener="#{servicioBean.actualizarServicio()}"
+                                      rendered="#{!servicioBean.flagActualizarEditar}"/>
+                    <p:commandButton value="Cancelar" 
+                                     update=":ingresoForm :form"
+                                     onclick="nuevoDialog.hide();" />
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
+

@@ -6,6 +6,7 @@
 package com.teamj.distribuidas.ui;
 
 import com.teamj.distribuidas.facade.FacadeNegocio;
+import com.teamj.distribuidas.facade.FacadeNegocioGeneral;
 import com.teamj.distribuidas.model.database.Opcion;
 import com.teamj.distribuidas.model.database.Perfil;
 import com.teamj.distribuidas.model.database.Rol;
@@ -116,7 +117,7 @@ public class DocumentoServiceBean {
         for (int i = 0; i < listaSistemas.size(); i++) {
             Sistema auxSistema = listaSistemas.get(i);
 //            TreeNode auxSistema = new CheckboxTreeNode(new Opcion(), root);
-            
+
         }
 
         return root;

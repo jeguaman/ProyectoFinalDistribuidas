@@ -7,6 +7,7 @@ package com.teamj.distribuidas.ui;
 
 import com.teamj.distribuidas.facade.FacadeNegocio;
 import com.teamj.distribuidas.model.database.Usuario;
+import com.teamj.distribuidas.model.database.UsuarioXPerfil;
 import com.teamj.distribuidas.util.EncriptacionUtil;
 import com.teamj.distribuidas.util.HttpSessionHandler;
 import java.io.IOException;
@@ -31,6 +32,15 @@ public class LoginBean implements Serializable {
     private String username;
     private String password;
     private HttpSessionHandler session;
+    private Boolean flagMostrar;
+
+    public Boolean getFlagMostrar() {
+        return flagMostrar;
+    }
+
+    public void setFlagMostrar(Boolean flagMostrar) {
+        this.flagMostrar = flagMostrar;
+    }
 
     public String getUsername() {
         return username;
@@ -61,6 +71,7 @@ public class LoginBean implements Serializable {
     }
 
     public void checkAccess() {
+        flagMostrar = false;
         if (username != null && username.compareTo("") != 0 && password != null && password.compareTo("") != 0) {
             try {
                 Boolean successUser = false;
@@ -69,13 +80,15 @@ public class LoginBean implements Serializable {
                     successUser = true;
                 }
                 if (successUser) {
-
-                    session.setNombreUsuario(username);
-                    RequestContext.getCurrentInstance().execute("PF('dlgLogin').hide();");
                     String pagina = "";
                     String context = ((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest()).getContextPath();
-                    pagina = context + "/pages/principal.xhtml";
+                    UsuarioXPerfil uxp = FacadeNegocio.retrieveUsuarioXPerfilBy_CodUsuario(user.getCodigo());
+                    session.setNombreUsuario(username);
+                    session.setPerfil(String.valueOf(uxp.getPerfil().getCodigoPerfil()));
+                    session.setCodigoUsuario(String.valueOf(user.getCodigo()));
+                    pagina = context + "/pages/main.xhtml";
                     FacesContext.getCurrentInstance().getExternalContext().redirect(pagina);
+                    RequestContext.getCurrentInstance().execute("PF('dlgLogin').hide();");
                 } else {
                     FacesContext.getCurrentInstance().addMessage(null,
                             new FacesMessage(FacesMessage.SEVERITY_ERROR, "ERROR", "Nombre de usuario o contraseña incorrectos."));

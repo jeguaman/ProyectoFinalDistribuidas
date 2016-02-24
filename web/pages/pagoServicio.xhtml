@@ -1,0 +1,133 @@
+<ui:composition template="/template/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="title">Pagos</ui:define>
+    <ui:define name="tituloFormulario">Pagos</ui:define>
+    <ui:define name="autor">Grupo 6 - Arrobo Patricio, Gavilánez Ricardo, Guamán José</ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />  
+            <h:panelGrid columns="1" style="margin: 0 auto;" >
+                <h:panelGrid columns="1" style="margin: 0 auto;" >
+                    <p:dataTable id="tablaPagos" 
+                                 var="pago" 
+                                 reflow="true"
+                                 value="#{pagoServicioBean.listaPagos}" 
+                                 selectionMode="single" 
+                                 paginatorPosition="bottom"
+                                 selection="#{pagoServicioBean.pagoSeleccionado}" 
+                                 rowKey="#{pago.pepagCodpag}"
+                                 rows="6" 
+                                 paginator="true" 
+                                 emptyMessage="Seleccione un criterio válido de búsqueda.">
+                        <!--<p:ajax event="rowSelect" update=":form:carDetail" oncomplete="PF('carDialog').show()" />-->
+
+                        <p:column headerText="Nombre paciente"   >
+                            <h:outputText value="#{pago.pepacPacien.pepacNompac}"  />
+                        </p:column>
+                        <p:column headerText="Servicio ocupado"   >
+                            <h:outputText value="#{pago.peserServic.peserNomser}"  />
+                        </p:column>
+                        <p:column headerText="Fecha Pago">
+                            <h:outputText value="#{pago.pepagFecser}">
+                                <f:convertDateTime pattern="yyyy-MM-dd" />
+                            </h:outputText> 
+                        </p:column>
+                        <p:column headerText="Valor deducible"   >
+                            <h:outputText value="$ #{pago.pepagValded}"  />
+                        </p:column> 
+                        <p:column headerText="Tipo pago" >
+                            <h:outputText value="#{pagoServicioBean.processTipoPago(pago.pepagTippag)}" />
+                        </p:column>
+                        <p:column headerText="Total pagoF"  >
+                            <h:outputText value="$ #{pago.pepagTotpag}"   />
+                        </p:column>
+                    </p:dataTable>
+                </h:panelGrid>
+                <br/>
+                <h:panelGrid columns="1" style="margin: 0 auto;" >
+                    <p:commandButton value="Nuevo Pago" oncomplete="PF('nuevoDialog').show();" action="#{pagoServicioBean.nuevo()}" update=":ingresoForm :form "/>
+                </h:panelGrid>
+            </h:panelGrid>
+        </h:form>
+        <p:dialog id="dialogNuevoPago"
+                  widgetVar="nuevoDialog" 
+                  modal="true" 
+                  showEffect="fade"
+                  resizable="false">
+            <h:form id="ingresoForm">
+                <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />  
+                <h3 style="text-align: center">#{pagoServicioBean.flagActualizarEditar eq true ? 'Agregar Pago' : 'Modificar Pago'}</h3>
+                <h:panelGrid columns="2" style="margin: 0 auto; border:0px !important; background:none; text-align: justify !important">
+                    <p:outputLabel value="Seleccione Proveedor:" />
+                    <p:selectOneMenu value="#{pagoServicioBean.proveedorSeleccionado}" style="width: 130px">
+                        <f:selectItem itemLabel="Seleccione" itemValue="-1"/>
+                        <f:selectItems value="#{pagoServicioBean.listaProveedores}" 
+                                       var="prov"
+                                       itemValue="#{prov.peproCodpro}"
+                                       itemLabel="#{prov.peproNompro}"/>
+                        <f:ajax event="change" execute="@form" render="@form" listener="#{pagoServicioBean.metodoVacio()}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Seleccione paciente:" />
+                    <p:selectOneMenu value="#{pagoServicioBean.pacienteSeleccionado}" style="width: 130px">
+                        <f:selectItem itemLabel="Seleccione" itemValue="-1"/>
+                        <f:selectItems value="#{pagoServicioBean.listaPacientes}" 
+                                       var="paci"
+                                       itemValue="#{paci.pepacCodpac}"
+                                       itemLabel="#{paci.pepacNompac} #{paci.pepacApepac}"/>
+                        <f:ajax event="change" execute="@form" render="@form" listener="#{pagoServicioBean.metodoVacio()}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Seleccione Servicio:" />
+                    <p:selectOneMenu value="#{pagoServicioBean.servicioSeleccionado}" style="width: 130px">
+                        <f:selectItem itemLabel="Seleccione" itemValue="-1"/>
+                        <f:selectItems value="#{pagoServicioBean.listaServicios}" 
+                                       var="serv"
+                                       itemValue="#{serv.peserCodser}"
+                                       itemLabel="#{serv.peserNomser}"/>
+                        <f:ajax event="change" execute="@form" render="@form" listener="#{pagoServicioBean.metodoVacio()}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel for="nivelServ" value="Valor deducible:" />
+                    <p:inputText id="nivelServ" maxlength="9" value="#{pagoServicioBean.costoDeducible}" placeholder="costo deducible ">
+                        <p:ajax event="blur" listener="#{pagoServicioBean.validateCostoDeducible()}" update=":ingresoForm:growl"/>
+                    </p:inputText>
+                    <p:outputLabel for="enlace" value="Forma Pago: " />
+                    <p:selectOneMenu id="enlace" value="#{pagoServicioBean.formaPago}" style="width: 130px">
+                        <f:selectItem itemLabel="Seleccione" itemValue="-1"/>
+                        <f:selectItem itemLabel="Efectivo" itemValue="1" />
+                        <f:selectItem itemLabel="Débito" itemValue="2" />
+                        <f:selectItem itemLabel="Gratis" itemValue="3" />
+                        <p:ajax event="change" listener="#{pacienteBean.metodoVacio()}" />
+                    </p:selectOneMenu>
+                    <p:outputLabel for="fecha" value="Fecha pago: " />
+                    <p:calendar id="fecha" value="#{pagoServicioBean.fechaServicio}"  placeholder="seleccione fecha" locale="es_ES" pattern="dd/MM/yyyy">
+                        <p:ajax event="dateSelect" listener="#{pagoServicioBean.metodoVacio()}" update=":ingresoForm:growl" />
+                    </p:calendar>
+                    <p:outputLabel for="totalPago" value="Total Pago:" />
+                    <p:inputText id="totalPago" maxlength="9" value="#{pagoServicioBean.costoTotal}" placeholder="costo deducible ">
+                        <p:ajax event="blur" listener="#{pagoServicioBean.validateCostoTotal()}" update=":ingresoForm:growl"/>
+                    </p:inputText>
+
+                </h:panelGrid>
+                <br/>
+                <h:panelGrid columns="2" style="margin: 0 auto; border:none !important; background:none;" >
+                    <p:commandButton  value="Agregar" 
+                                      update=":form"
+                                      actionListener="#{pagoServicioBean.guardar()}"
+                                      rendered="#{pagoServicioBean.flagActualizarEditar}"/>
+                    <p:commandButton  value="Actualizar" 
+                                      update=":form"
+                                      actionListener="#{pagoServicioBean.actualizar()}"
+                                      rendered="#{!pagoServicioBean.flagActualizarEditar}"/>
+                    <p:commandButton value="Cancelar" 
+                                     update=":ingresoForm :form"
+                                     onclick="nuevoDialog.hide();" />
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>
+

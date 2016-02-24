@@ -1,0 +1,40 @@
+<ui:composition template="/template/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="title">Principal</ui:define>
+    <ui:define name="tituloFormulario">Gestión Adiministrativa</ui:define>
+    <ui:define name="autor">Grupo 6 - Arrobo Patricio, Gavilánez Ricardo, Guamán José</ui:define>
+    <ui:define name="nombreUsuario">#{opcionBean.nombreUsuario}</ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />
+            <h1>Cambio Contraseña</h1>
+
+            <h:panelGrid columns="1" style="margin: 0 auto;">
+                <p:outputLabel for="pass" value="Contraseña Anterior:" />
+                <p:inputText value="#{cambioContraseniaBean.oldPassword}" type="password" style="width:350px;" placeholder="contraseña actual">
+                    <p:ajax event="blur" listener="#{cambioContraseniaBean.validateContraseniaAntigua()}" update=":form:growl"/>
+                </p:inputText>
+                <p:outputLabel for="pass" value="Nueva Contraseña:" />
+                <p:password id="pass" feedback="true" value="#{cambioContraseniaBean.nuevaPassword}" placeholder="Contraseña" inline="true">
+                    <p:ajax event="blur" listener="#{cambioContraseniaBean.metodoVacio()}"/>
+                </p:password>
+                <h:outputText value="Confirmación Nueva Contraseña:"/>
+                <p:inputText type="password" value="#{cambioContraseniaBean.password}" placeholder="Repetir Contraseña">
+                    <p:ajax event="blur" listener="#{cambioContraseniaBean.validateContrasenias()}" update=":form:growl"/>
+                </p:inputText>
+            </h:panelGrid>
+
+            <p:spacer height="20"/>
+            <h:panelGrid columns="3" style="margin-top: 10px; margin-left: auto; margin-right: auto;">
+                <p:commandButton  value="Guardar" 
+                                  update=":form"
+                                  actionListener="#{cambioContraseniaBean.cambiarContrasenia()}"/>
+            </h:panelGrid>
+        </h:form>
+    </ui:define>
+</ui:composition>
+

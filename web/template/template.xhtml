@@ -42,29 +42,11 @@
                         </div>
                     </div>
                     <div >
-                        <p:tabMenu activeIndex="#{param.i}" id="tabMenu" style="font-size: 10px">
-                            <p:menuitem value="Gestión Empleado" outcome="/pages/principal" update="tabMenu" >
-                                <f:param name="i" value="0" />
-                            </p:menuitem>
-                            <p:menuitem value="Gestión Usuario" outcome="/pages/usuario" update="tabMenu" >
-                                <f:param name="i" value="1" />
-                            </p:menuitem>
-                            <p:menuitem value="Gestión Sistema" outcome="/pages/sistema" update="tabMenu" >
-                                <f:param name="i" value="2" />
-                            </p:menuitem>
-                            <p:menuitem value="Gestión Perfil" outcome="/pages/perfil" update="tabMenu" >
-                                <f:param name="i" value="3" />
-                            </p:menuitem>
-                            <p:menuitem value="Gestión Opción" outcome="/pages/opcion" update="tabMenu" >
-                                <f:param name="i" value="4" />
-                            </p:menuitem>
-                            <p:menuitem value="Opciones por perfil" outcome="/pages/opcion_perfil" update="tabMenu" >
-                                <f:param name="i" value="5" />
-                            </p:menuitem>
-                            <p:menuitem value="Usuario por perfil" outcome="/pages/usuario_perfil" update="tabMenu">
-                                <f:param name="i" value="6" />
-                            </p:menuitem>
-                        </p:tabMenu>
+                        <h:form >
+                            <h:panelGrid columns="1" style="margin: 0 auto;">
+                                <p:menubar model="#{menuBaseBean.model}"/>
+                            </h:panelGrid>
+                        </h:form>
                     </div>
                 </td>
             </tr>

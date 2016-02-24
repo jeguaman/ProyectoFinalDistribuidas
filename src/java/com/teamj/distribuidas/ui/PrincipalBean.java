@@ -6,6 +6,7 @@
 package com.teamj.distribuidas.ui;
 
 import com.teamj.distribuidas.facade.FacadeNegocio;
+import com.teamj.distribuidas.facade.FacadeNegocioGeneral;
 import com.teamj.distribuidas.model.database.Persona;
 import com.teamj.distribuidas.util.HttpSessionHandler;
 import com.teamj.distribuidas.util.ValidationUtil;

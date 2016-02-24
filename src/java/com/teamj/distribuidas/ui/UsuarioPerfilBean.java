@@ -6,6 +6,7 @@
 package com.teamj.distribuidas.ui;
 
 import com.teamj.distribuidas.facade.FacadeNegocio;
+import com.teamj.distribuidas.facade.FacadeNegocioGeneral;
 import com.teamj.distribuidas.model.database.Perfil;
 import com.teamj.distribuidas.model.database.Usuario;
 import java.io.Serializable;

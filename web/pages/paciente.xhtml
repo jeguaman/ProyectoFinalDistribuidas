@@ -1,0 +1,105 @@
+<ui:composition template="/template/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="title">Pacientes</ui:define>
+    <ui:define name="tituloFormulario">Gestión Pacientes</ui:define>
+    <ui:define name="autor">Grupo 6 - Arrobo Patricio, Gavilánez Ricardo, Guamán José</ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />  
+            <p:outputLabel value="Búsqueda por nombre de paciente: "/>
+            <h:panelGrid columns="2" style="margin: 0 auto;">
+                <p:inputText value="#{pacienteBean.buscar}" placeholder="Valor a buscar"/>
+                <p:commandButton value="Buscar" 
+                                 action="#{pacienteBean.buscarPaciente()}" 
+                                 update=":form:tablaPaciente :form:growl"   />
+            </h:panelGrid>
+            <h:panelGrid columns="1" style="margin: 0 auto;" >
+                <p:dataTable id="tablaPaciente" 
+                             var="paciente" 
+                             reflow="true"
+                             value="#{pacienteBean.listaPacientes}" 
+                             selectionMode="single" 
+                             paginatorPosition="bottom"
+                             selection="#{pacienteBean.pacienteSeleccionado}" 
+                             rowKey="#{paciente.pepacCodpac}"
+                             rows="6" 
+                             paginator="true" 
+                             emptyMessage="Seleccione un criterio válido de búsqueda.">
+                    <!--<p:ajax event="rowSelect" update=":form:carDetail" oncomplete="PF('carDialog').show()" />-->
+
+                    <p:column headerText="Nombre paciente"  >
+                        <h:outputText value="#{paciente.pepacNompac}"/>
+                    </p:column>
+                    <p:column headerText="Apellido paciente"   >
+                        <h:outputText value="#{paciente.pepacApepac}"  />
+                    </p:column> 
+                    <p:column headerText="Área Geográfica" >
+                        <h:outputText value="#{pacienteBean.processAreaGeografica(paciente.pepacAregeo)}" />
+                    </p:column>
+                    <p:column headerText="Cubierta medicare"  >
+                        <h:outputText value="#{pacienteBean.processTarifaServicio(paciente.pepacTarser)}"   />
+                    </p:column>
+                </p:dataTable>
+            </h:panelGrid>
+            <br/>
+            <h:panelGrid columns="3" style="margin: 0 auto;" >
+                <p:commandButton value="Nuevo" oncomplete="PF('nuevoDialog').show();" action="#{pacienteBean.nuevo()}" update=":ingresoForm :form "/>
+                <p:commandButton value="Editar" actionListener="#{pacienteBean.editar()}" update=":ingresoForm" process="@form"/>
+                <p:commandButton value="Eliminar" action="#{pacienteBean.eliminar()}" update=":form"/>
+            </h:panelGrid>
+        </h:form>
+        <p:dialog id="dialogIngresoPaciente"
+                  widgetVar="nuevoDialog" 
+                  modal="true" 
+                  showEffect="fade"
+                  resizable="false">
+            <h:form id="ingresoForm">
+                <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />  
+                <h3 style="text-align: center">#{pacienteBean.flagActualizarEditar eq true ? 'Agregar Paciente' : 'Modificar Paciente'}</h3>
+                <h:panelGrid columns="2" style="margin: 0 auto; border:0px !important; background:none; text-align: justify !important">
+                    <p:outputLabel for="nombreProv" value="Nombre paciente: " />
+                    <p:inputText id="nombreProv" maxlength="44" value="#{pacienteBean.nombrePaciente}" placeholder="Nombre paciente">
+                        <p:ajax event="blur" listener="#{pacienteBean.validateNombre()}" update=":ingresoForm:growl"/>
+                    </p:inputText>
+                    <p:outputLabel for="nivelServ" value="Apellido paciente:" />
+                    <p:inputText id="nivelServ" maxlength="44" value="#{pacienteBean.apellido}" placeholder="Apellido ">
+                        <p:ajax event="blur" listener="#{pacienteBean.validateApellido()}" update=":ingresoForm:growl"/>
+                    </p:inputText>
+                    <p:outputLabel for="enlace" value="Área Geográfica: " />
+                    <p:selectOneMenu id="enlace" value="#{pacienteBean.areaGeografica}" style="width: 130px">
+                        <f:selectItem itemLabel="Seleccione" itemValue="-1"/>
+                        <f:selectItem itemLabel="San Juan" itemValue="1" />
+                        <f:selectItem itemLabel="Bayamon (hasta Dorado)" itemValue="2" />
+                        <f:selectItem itemLabel="Caguas - Cayey" itemValue="3" />
+                        <f:selectItem itemLabel="Carolina (hasta Río Grande)" itemValue="4" />
+                        <p:ajax event="change" listener="#{pacienteBean.metodoVacio()}" />
+                    </p:selectOneMenu>
+                    <p:outputLabel for="porceDeduc" value="Cubierta Medicare?:" />
+                    <p:selectBooleanButton id="porceDeduc" value="#{pacienteBean.tarifaServicio}" onLabel="Si" offLabel="No" style="width:60px">
+                        <p:ajax update=":ingresoForm:growl" listener="#{pacienteBean.metodoVacio()}" />
+                    </p:selectBooleanButton>
+                </h:panelGrid>
+                <br/>
+                <h:panelGrid columns="2" style="margin: 0 auto; border:none !important; background:none;" >
+                    <p:commandButton  value="Guardar" 
+                                      update=":form"
+                                      actionListener="#{pacienteBean.guardarPaciente()}"
+                                      rendered="#{pacienteBean.flagActualizarEditar}"/>
+                    <p:commandButton  value="Actualizar" 
+                                      update=":form"
+                                      actionListener="#{pacienteBean.actualizarPaciente()}"
+                                      rendered="#{!pacienteBean.flagActualizarEditar}"/>
+                    <p:commandButton value="Cancelar" 
+                                     update=":ingresoForm :form"
+                                     onclick="nuevoDialog.hide();" />
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>
+

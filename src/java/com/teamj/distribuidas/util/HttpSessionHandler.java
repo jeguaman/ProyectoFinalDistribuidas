@@ -66,6 +66,19 @@ public class HttpSessionHandler {
         session.setAttribute(attrName, nombre);
     }
 
+    public String getCodigoUsuario() {
+        String attrName = "codUser";
+        if (session.getAttribute(attrName) != null) {
+            return (String) session.getAttribute(attrName);
+        }
+        return null;
+    }
+
+    public void setCodigoUsuario(String nombre) {
+        String attrName = "codUser";
+        session.setAttribute(attrName, nombre);
+    }
+
     public String getPerfil() {
         String attrName = "perfil";
         if (session.getAttribute(attrName) != null) {

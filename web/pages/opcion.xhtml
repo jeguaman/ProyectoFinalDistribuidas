@@ -16,10 +16,10 @@
                 <p:dataTable id="tablaPersona" 
                              var="persona" 
                              reflow="true"
-                             value="#{opcionBean.listaOpciones}" 
+                             value="#{opcionBean.listaTodasOpciones}" 
                              selectionMode="single" 
                              paginatorPosition="bottom"
-                             selection="#{opcionBean.opcionSeleccionada}" 
+                             selection="#{opcionBean.opcionNuevoIngreso}" 
                              rowKey="#{persona.codigo}"
                              rows="6" 
                              paginator="true" 
@@ -30,6 +30,9 @@
                     </p:column>
                     <p:column headerText="Descripción"   >
                         <h:outputText value="#{persona.descripcion}"/>
+                    </p:column> 
+                    <p:column headerText="Nivel"   >
+                        <h:outputText value="#{opcionBean.processNivel(persona.nivel)}"/>
                     </p:column> 
                 </p:dataTable>
             </h:panelGrid>
@@ -68,9 +71,37 @@
                     </h:panelGrid>
                     <h:panelGrid columns="2" style="text-align: justify !important">
                         <p:outputLabel for="nombreUser" value="Nombre:" />
-                        <p:inputText id="nombreUser" maxlength="59" value="#{opcionBean.opcionSeleccionada.nombreOpcion}" placeholder="Nombre opción">
-                            <p:ajax event="blur" listener="#{opcionBean.metodoVacio()}" update=":ingresoForm:growl"/>
+                        <p:inputText id="nombreUser" maxlength="59" value="#{opcionBean.opcionNuevoIngreso.nombreOpcion}" placeholder="Nombre opción">
+                            <p:ajax event="blur" listener="#{opcionBean.validateNombre()}" update=":ingresoForm:growl"/>
                         </p:inputText>
+                    </h:panelGrid>
+                    <h:panelGrid columns="2" style="text-align: justify !important">
+                        <h:panelGrid columns="1" style="text-align: justify !important">
+                            <h:panelGrid columns="2" style="text-align: justify !important">
+                                <p:outputLabel for="nivel" value="Nivel :" />
+                                <p:selectOneMenu id="nivel" value="#{opcionBean.opcionNuevoIngreso.nivel}" style="width: 130px">
+                                    <f:selectItem itemLabel="Menú Principal" itemValue="1" />
+                                    <f:selectItem itemLabel="Sub Menu" itemValue="2" />
+                                    <!--<f:selectItem itemLabel="Item" itemValue="3" />-->
+                                    <p:ajax event="change" listener="#{opcionBean.showOpcionesByNivel()}" 
+                                            update="@form"/>
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                        </h:panelGrid>
+                        <h:panelGrid id="showOpciones" rendered="#{opcionBean.flagShow}" columns="1" style="text-align: justify !important">
+                            <p:outputLabel value="Por favor asocie al padre de la nueva opción." />
+                            <h:panelGrid columns="2" style="text-align: justify !important">
+                                <p:outputLabel for="opciones" value="Opciones:" />
+                                <p:selectOneMenu id="opciones" value="#{opcionBean.opcionSeleccionada}" style="width: 130px">
+                                    <f:selectItem itemLabel="Ninguno" itemValue="-1"/>
+                                    <f:selectItems value="#{opcionBean.listaOpciones}" 
+                                                   var="provee"
+                                                   itemValue="#{provee.codigo}"
+                                                   itemLabel="#{provee.nombreOpcion}"/>
+                                    <p:ajax event="change" listener="#{opcionBean.metodoVacio()}" />
+                                </p:selectOneMenu>
+                            </h:panelGrid>
+                        </h:panelGrid>
                     </h:panelGrid>
                     <h:panelGrid columns="1" style="text-align: justify !important">
                         <h:panelGrid columns="2" style="text-align: justify !important">
@@ -78,8 +109,11 @@
                                 <p:outputLabel value="Descripción: " />
                             </h:panelGrid>
                             <h:panelGrid columns="1" style="text-align: justify !important">
-                                <p:inputTextarea maxlength="200" rows="5" cols="30" counter="display" counterTemplate="{0} caracteres restantes." value="#{opcionBean.opcionSeleccionada.descripcion}" placeholder="Descripción">
-                                    <p:ajax event="blur" listener="#{opcionBean.metodoVacio()}" update=":ingresoForm:growl"/>
+                                <p:inputTextarea maxlength="300" rows="5" cols="30" counter="display"
+                                                 counterTemplate="{0} caracteres restantes." 
+                                                 value="#{opcionBean.opcionNuevoIngreso.descripcion}" 
+                                                 placeholder="Descripción">
+                                    <p:ajax event="blur" listener="#{opcionBean.validateDescripcion()}" update=":ingresoForm:growl"/>
                                 </p:inputTextarea>
                                 <h:outputText id="display" />
                             </h:panelGrid>

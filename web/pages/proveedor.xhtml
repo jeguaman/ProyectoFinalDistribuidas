@@ -1,0 +1,109 @@
+<ui:composition template="/template/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="title">Proveedores</ui:define>
+    <ui:define name="tituloFormulario">Gestión Proveedores</ui:define>
+    <ui:define name="autor">Grupo 6 - Arrobo Patricio, Gavilánez Ricardo, Guamán José</ui:define>
+    <ui:define name="content">
+        <h:form id="form">
+            <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />  
+            <p:outputLabel value="Búsqueda por nombre de proveedor: "/>
+            <h:panelGrid columns="2" style="margin: 0 auto;">
+                <p:inputText value="#{proveedorBean.buscar}" placeholder="Valor a buscar"/>
+                <p:commandButton value="Buscar" 
+                                 action="#{proveedorBean.buscarProveedor()}" 
+                                 update=":form:tablaProveedor :form:growl"   />
+            </h:panelGrid>
+
+            <h:panelGrid columns="1" style="margin: 0 auto;" >
+                <p:dataTable id="tablaProveedor" 
+                             var="proveedor" 
+                             reflow="true"
+                             value="#{proveedorBean.listaProveedores}" 
+                             selectionMode="single" 
+                             paginatorPosition="bottom"
+                             selection="#{proveedorBean.proveedorSeleccionado}" 
+                             rowKey="#{proveedor.peproCodpro}"
+                             rows="6" 
+                             paginator="true" 
+                             emptyMessage="Seleccione un criterio válido de búsqueda.">
+                    <!--<p:ajax event="rowSelect" update=":form:carDetail" oncomplete="PF('carDialog').show()" />-->
+
+                    <p:column headerText="Nombre proveedor"  >
+                        <h:outputText value="#{proveedor.peproNompro}"/>
+                    </p:column>
+                    <p:column headerText="Nivel Servicio"   >
+                        <h:outputText value="#{proveedor.peproNivser}"  />
+                    </p:column> 
+                    <p:column headerText="Porcentaje deducible"  >
+                        <h:outputText value="$ #{proveedor.peproPorded}"   />
+                    </p:column>
+                    <p:column headerText="Área Geográfica" >
+                        <h:outputText value="#{proveedorBean.processAreaGeografica(proveedor.peproArgeog)}" />
+                    </p:column>
+                </p:dataTable>
+            </h:panelGrid>
+            <br/>
+            <h:panelGrid columns="3" style="margin: 0 auto;" >
+                <p:commandButton value="Nuevo" oncomplete="PF('nuevoProveedorDialog').show();" action="#{proveedorBean.nuevoProveedor()}" update=":ingresoForm :form "/>
+                <p:commandButton value="Editar" actionListener="#{proveedorBean.editar()}" update=":ingresoForm" process="@form"/>
+                <p:commandButton value="Eliminar" action="#{proveedorBean.eliminar()}" update=":form" />
+            </h:panelGrid>
+
+        </h:form>
+        <p:dialog id="dialogIngresoProveedor"
+
+                  widgetVar="nuevoProveedorDialog" 
+                  modal="true" 
+                  showEffect="fade"
+                  resizable="false">
+            <h:form id="ingresoForm">
+                <p:growl id="growl" showDetail="true" autoUpdate="true" sticky="false" life="3000" />  
+                <h3 style="text-align: center">#{proveedorBean.flagActualizarEditar eq true ? 'Agregar Proveedor' : 'Modificar Proveedor'}</h3>
+                <h:panelGrid columns="2" style="margin: 0 auto; border:0px !important; background:none; text-align: justify !important">
+                    <p:outputLabel for="nombreProv" value="Nombre proveedor:" />
+                    <p:inputText id="nombreProv" maxlength="59" value="#{proveedorBean.nombre}" placeholder="Nombre proveedor">
+                        <p:ajax event="blur" listener="#{proveedorBean.validateNombre()}" update=":ingresoForm:growl"/>
+                    </p:inputText>
+                    <p:outputLabel for="nivelServ" value="Nivel Servicio:" />
+                    <p:inputText id="nivelServ" maxlength="44" value="#{proveedorBean.nivelServicio}" placeholder="clínica, hospital, etc  ">
+                        <p:ajax event="blur" listener="#{proveedorBean.validateNivelServicio()}" update=":ingresoForm:growl"/>
+                    </p:inputText>
+                    <p:outputLabel for="porceDeduc" value="Porcentaje deducible:" />
+                    <p:inputText id="porceDeduc" maxlength="7" value="#{proveedorBean.porcentajeDedicible}" placeholder="valor en $0.00">
+                        <p:ajax event="blur" listener="#{proveedorBean.validatePorcentajeDeducible()}" update=":ingresoForm:growl"/>
+                    </p:inputText>
+                    <p:outputLabel for="enlace" value="Área Geográfica: " />
+                    <p:selectOneMenu id="enlace" value="#{proveedorBean.areaGeografica}" style="width: 130px">
+                        <f:selectItem itemLabel="Seleccione" itemValue="-1"/>
+                        <f:selectItem itemLabel="San Juan" itemValue="1" />
+                        <f:selectItem itemLabel="Bayamon (hasta Dorado)" itemValue="2" />
+                        <f:selectItem itemLabel="Caguas - Cayey" itemValue="3" />
+                        <f:selectItem itemLabel="Carolina (hasta Río Grande)" itemValue="4" />
+                        <p:ajax event="change" listener="#{proveedorBean.metodoVacio()}" />
+                    </p:selectOneMenu>
+                </h:panelGrid>
+                <br/>
+                <h:panelGrid columns="2" style="margin: 0 auto; border:none !important; background:none;" >
+                    <p:commandButton  value="Guardar" 
+                                      update=":form"
+                                      actionListener="#{proveedorBean.guardarProveedor()}"
+                                      rendered="#{proveedorBean.flagActualizarEditar}"/>
+                    <p:commandButton  value="Actualizar" 
+                                      update=":form"
+                                      actionListener="#{proveedorBean.actualizarProveedor()}"
+                                      rendered="#{!proveedorBean.flagActualizarEditar}"/>
+                    <p:commandButton value="Cancelar" 
+                                     update=":ingresoForm :form"
+                                     onclick="nuevoProveedorDialog.hide();" />
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>
+
